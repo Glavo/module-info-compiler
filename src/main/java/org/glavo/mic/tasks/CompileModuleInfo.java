@@ -1,4 +1,4 @@
-package org.glavo.mic.plugin;
+package org.glavo.mic.tasks;
 
 import org.glavo.mic.ModuleInfoCompiler;
 import org.gradle.api.DefaultTask;

@@ -17,13 +17,15 @@ allprojects {
     }
 
     group = "org.glavo"
-    version = "1.1" + "-SNAPSHOT"
+    version = "1.1"// + "-SNAPSHOT"
 
     repositories {
         mavenCentral()
     }
 
     dependencies {
+        compileOnly(gradleApi())
+
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
     }
@@ -48,20 +50,23 @@ dependencies {
 }
 
 tasks.jar {
+    enabled = false
+    dependsOn(tasks.shadowJar)
+}
+
+tasks.shadowJar {
     manifest {
         attributes(
             "Main-Class" to "org.glavo.mic.ModuleInfoCompiler"
         )
     }
-}
 
-tasks.shadowJar {
+    archiveClassifier.set(null as String?)
+
     relocate("org.objectweb.asm", "org.glavo.mic.asm")
     relocate("com.github.javaparser", "org.glavo.mic.javaparser")
-    minimize()
 
-    archiveBaseName.set("gmic")
-    archiveClassifier.set(null as String?)
+    minimize()
 }
 
 java {
@@ -69,7 +74,7 @@ java {
     // withJavadocJar()
 }
 
-val javadocJar = tasks.create<Jar>("javadocJar") {
+tasks.create<Jar>("javadocJar") {
     group = "build"
     archiveClassifier.set("javadoc")
 }
@@ -84,8 +89,9 @@ configure<PublishingExtension> {
             groupId = project.group.toString()
             version = project.version.toString()
             artifactId = project.name
-            from(components["java"])
-            artifact(javadocJar)
+            artifact(tasks.shadowJar)
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
 
             pom {
                 name.set(project.name)
