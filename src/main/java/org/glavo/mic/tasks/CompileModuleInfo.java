@@ -3,21 +3,16 @@ package org.glavo.mic.tasks;
 import org.glavo.mic.ModuleInfoCompiler;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.OutputFile;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.*;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public abstract class CompileModuleInfo extends DefaultTask {
     private int targetCompatibility = ModuleInfoCompiler.DEFAULT_TARGET_COMPATIBILITY;
     private String moduleVersion;
     private String moduleMainClass;
-    private Charset encoding = StandardCharsets.UTF_8;
+    private String encoding = "UTF-8";
 
     @InputFile
     public abstract RegularFileProperty getSourceFile();
@@ -35,6 +30,7 @@ public abstract class CompileModuleInfo extends DefaultTask {
     }
 
     @Input
+    @Optional
     public String getModuleVersion() {
         return moduleVersion;
     }
@@ -44,6 +40,7 @@ public abstract class CompileModuleInfo extends DefaultTask {
     }
 
     @Input
+    @Optional
     public String getModuleMainClass() {
         return moduleMainClass;
     }
@@ -53,11 +50,12 @@ public abstract class CompileModuleInfo extends DefaultTask {
     }
 
     @Input
-    public Charset getEncoding() {
+    @Optional
+    public String getEncoding() {
         return encoding;
     }
 
-    public void setEncoding(Charset encoding) {
+    public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
 

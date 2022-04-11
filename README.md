@@ -34,12 +34,12 @@ Maven:
 <dependency>
     <groupId>org.glavo</groupId>
     <artifactId>module-info-compiler</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
 </dependency>
 ```
 
 Gradle:
 
 ```kotlin
-implementation("org.glavo:module-info-compiler:1.1")
+implementation("org.glavo:module-info-compiler:1.2")
 ```
