@@ -15,7 +15,7 @@ A Gradle plugin will be provided in the future.
 ### Use as a CLI tool
 
 Download the jar from the [release page](https://github.com/Glavo/GMIC/releases/),
-run it with `java -jar gmic.jar`.
+run it with `java -jar module-info-compiler.jar`.
 
 The parameters it accepts are as follows:
 
@@ -34,12 +34,12 @@ Maven:
 <dependency>
     <groupId>org.glavo</groupId>
     <artifactId>module-info-compiler</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 
 Gradle:
 
 ```kotlin
-implementation("org.glavo:module-info-compiler:1.0")
+implementation("org.glavo:module-info-compiler:1.1")
 ```
