@@ -4,6 +4,8 @@ A tool for compiling `module-info.java` for Java alone.
 
 It can easily compile `module-info.java` for your Java 8 project to fit JPMS without complicated module path configuration.
 
+It only parses the syntax of `module-info.java` without checking the actual module.
+If you really don't know how to configure javac to compile `module-info.java` correctly in a complex project, it can help you.
 
 ## Usage
 
