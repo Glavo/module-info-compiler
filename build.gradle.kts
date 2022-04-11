@@ -59,6 +59,9 @@ tasks.shadowJar {
     relocate("org.objectweb.asm", "org.glavo.mic.asm")
     relocate("com.github.javaparser", "org.glavo.mic.javaparser")
     minimize()
+
+    archiveBaseName.set("gmic")
+    archiveClassifier.set(null as String?)
 }
 
 java {
