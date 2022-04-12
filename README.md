@@ -25,8 +25,6 @@ Usage: gmic [-target <target compatibility>] [-main-class <module main class>] [
 
 ### Added as a Maven dependency
 
-(Maven Central takes a while to synchronize dependencies, if you can't get them, please wait)
-
 This tool has been published on Maven Central, you can add dependencies to it like this:
 
 Maven:
