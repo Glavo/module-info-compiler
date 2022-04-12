@@ -10,7 +10,7 @@ If you really don't know how to configure javac to compile `module-info.java` co
 ## Usage
 
 Currently this tool supports being used as a command line tool, and also supports being added as a Maven dependency.
-It also includes a prebuilt Gradle task. In the future I may provide a Gradle plugin to use it.
+It also includes a prebuilt Gradle task type. In the future I may provide a Gradle plugin to use it.
 
 ### Use as a CLI tool
 
