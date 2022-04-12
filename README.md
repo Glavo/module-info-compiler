@@ -10,7 +10,7 @@ If you really don't know how to configure javac to compile `module-info.java` co
 ## Usage
 
 Currently this tool supports being used as a command line tool, and also supports being added as a Maven dependency.
-A Gradle plugin will be provided in the future.
+It also includes a prebuilt Gradle task. In the future I may provide a Gradle plugin to use it.
 
 ### Use as a CLI tool
 
@@ -40,4 +40,35 @@ Gradle:
 
 ```kotlin
 implementation("org.glavo:module-info-compiler:1.2")
+```
+
+### Gradle Task (`CompileModuleInfo`)
+
+First, you can add it to the classpath of your Gradle build script like this:
+
+```kotlin
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.glavo:module-info-compiler:1.2")
+    }
+}
+```
+
+Then you can create a task that compiles `module-info.java` like this:
+
+```kotlin
+tasks.create<org.glavo.mic.tasks.CompileModuleInfo>("compileModuleInfo") {
+    sourceFile.set(file("src/main/module-info.java"))
+    targetFile.set(buildDir.resolve("classes/java/module-info/module-info.class"))
+
+    targetCompatibility = 9         // Optional, defaults to 9
+    encoding = "UTF-8"              // Optional, defaults to UTF-8
+    moduleVersion = "1.0.0"         // Optional
+    moduleMainClass = "simple.Main" // Optional
+    
+}
 ```
