@@ -73,6 +73,10 @@ public class ModuleInfoCompiler {
                 moduleVisitor.visitMainClass(mainClass);
             }
 
+            if (!md.getNameAsString().equals("java.base")) {
+                moduleVisitor.visitRequire("java.base", 0, null);
+            }
+
             for (ModuleDirective directive : md.getDirectives()) {
                 if (directive.isModuleExportsDirective()) {
                     ModuleExportsDirective export = directive.asModuleExportsDirective();
@@ -85,7 +89,9 @@ public class ModuleInfoCompiler {
                     moduleVisitor.visitProvide(provides.getNameAsString(), nameListToArray(provides.getWith()));
                 } else if (directive.isModuleRequiresDirective()) {
                     ModuleRequiresDirective requires = directive.asModuleRequiresDirective();
-                    moduleVisitor.visitRequire(requires.getNameAsString(), 0, null);
+                    if (!requires.getNameAsString().equals("java.base")) {
+                        moduleVisitor.visitRequire(requires.getNameAsString(), 0, null);
+                    }
                 } else if (directive.isModuleUsesDirective()) {
                     ModuleUsesDirective uses = directive.asModuleUsesDirective();
                     moduleVisitor.visitUse(uses.getNameAsString());
