@@ -41,7 +41,7 @@ public class ModuleInfoCompiler {
         this.mainClass = mainClass;
     }
 
-    private static String[] nameListToArray(NodeList<Name> list) {
+    private static String[] moduleNameListToArray(NodeList<Name> list) {
         if (list.isEmpty()) {
             return EMPTY_STRING_ARRAY;
         }
@@ -49,6 +49,18 @@ public class ModuleInfoCompiler {
         String[] res = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {
             res[i] = list.get(i).asString();
+        }
+        return res;
+    }
+
+    private static String[] packageNameListToArray(NodeList<Name> list) {
+        if (list.isEmpty()) {
+            return EMPTY_STRING_ARRAY;
+        }
+
+        String[] res = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            res[i] = list.get(i).asString().replace('.', '/');
         }
         return res;
     }
@@ -80,13 +92,13 @@ public class ModuleInfoCompiler {
             for (ModuleDirective directive : md.getDirectives()) {
                 if (directive.isModuleExportsDirective()) {
                     ModuleExportsDirective export = directive.asModuleExportsDirective();
-                    moduleVisitor.visitExport(export.getNameAsString(), 0, nameListToArray(export.getModuleNames()));
+                    moduleVisitor.visitExport(export.getNameAsString().replace('.', '/'), 0, moduleNameListToArray(export.getModuleNames()));
                 } else if (directive.isModuleOpensDirective()) {
                     ModuleOpensDirective open = directive.asModuleOpensDirective();
-                    moduleVisitor.visitOpen(open.getNameAsString(), 0, nameListToArray(open.getModuleNames()));
+                    moduleVisitor.visitOpen(open.getNameAsString().replace('.', '/'), 0, moduleNameListToArray(open.getModuleNames()));
                 } else if (directive.isModuleProvidesDirective()) {
                     ModuleProvidesDirective provides = directive.asModuleProvidesDirective();
-                    moduleVisitor.visitProvide(provides.getNameAsString(), nameListToArray(provides.getWith()));
+                    moduleVisitor.visitProvide(provides.getNameAsString().replace('.', '/'), packageNameListToArray(provides.getWith()));
                 } else if (directive.isModuleRequiresDirective()) {
                     ModuleRequiresDirective requires = directive.asModuleRequiresDirective();
                     if (!requires.getNameAsString().equals("java.base")) {
@@ -94,7 +106,7 @@ public class ModuleInfoCompiler {
                     }
                 } else if (directive.isModuleUsesDirective()) {
                     ModuleUsesDirective uses = directive.asModuleUsesDirective();
-                    moduleVisitor.visitUse(uses.getNameAsString());
+                    moduleVisitor.visitUse(uses.getNameAsString().replace('.', '/'));
                 } else {
                     throw new AssertionError("Unknown module directive: " + directive);
                 }
