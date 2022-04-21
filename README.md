@@ -37,14 +37,14 @@ Maven:
 <dependency>
     <groupId>org.glavo</groupId>
     <artifactId>module-info-compiler</artifactId>
-    <version>1.3</version>
+    <version>1.5</version>
 </dependency>
 ```
 
 Gradle:
 
 ```kotlin
-implementation("org.glavo:module-info-compiler:1.3")
+implementation("org.glavo:module-info-compiler:1.5")
 ```
 
 ### Gradle Task (`CompileModuleInfo`)
@@ -58,7 +58,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.glavo:module-info-compiler:1.3")
+        classpath("org.glavo:module-info-compiler:1.5")
     }
 }
 ```

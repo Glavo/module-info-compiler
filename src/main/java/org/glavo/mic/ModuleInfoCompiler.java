@@ -3,6 +3,7 @@ package org.glavo.mic;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.modules.*;
@@ -102,7 +103,16 @@ public class ModuleInfoCompiler {
                 } else if (directive.isModuleRequiresDirective()) {
                     ModuleRequiresDirective requires = directive.asModuleRequiresDirective();
                     if (!requires.getNameAsString().equals("java.base")) {
-                        moduleVisitor.visitRequire(requires.getNameAsString(), 0, null);
+                        int access = 0;
+                        for (Modifier modifier : requires.getModifiers()) {
+                            if (modifier.getKeyword() == Modifier.Keyword.STATIC) {
+                                access |= Opcodes.ACC_STATIC_PHASE;
+                            } else if (modifier.getKeyword() == Modifier.Keyword.TRANSITIVE) {
+                                access |= Opcodes.ACC_TRANSITIVE;
+                            }
+                        }
+
+                        moduleVisitor.visitRequire(requires.getNameAsString(), access, null);
                     }
                 } else if (directive.isModuleUsesDirective()) {
                     ModuleUsesDirective uses = directive.asModuleUsesDirective();
