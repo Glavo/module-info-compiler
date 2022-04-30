@@ -1,24 +1,62 @@
 package org.glavo.mic.plugin;
 
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
-import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.jvm.tasks.Jar;
+import org.glavo.mic.plugin.tasks.CompileModuleInfo;
+import org.gradle.api.*;
+import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskProvider;
+import org.gradle.api.tasks.compile.JavaCompile;
+import org.gradle.util.GradleVersion;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
 
 public class CompileModuleInfoPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
-        project.getPlugins().apply(JavaPlugin.class);
+        project.getPlugins().apply("java");
 
-        CompileModuleInfo compileModuleInfo = project.getTasks().create("compileModuleInfo", CompileModuleInfo.class, task -> {
-            task.getSourceFile().set(project.file("src/main/java/module-info.java"));
-            task.getTargetFile().set(new File(project.getBuildDir(), "module-info/module-info.class"));
-        });
+        SourceSet main;
+        try {
+            if (GradleVersion.current().compareTo(GradleVersion.version("7.1")) >= 0) {
+                JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
+                main = javaPluginExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+            } else {
+                JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+                main = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+            }
+        } catch (IllegalStateException | UnknownDomainObjectException e) {
+            throw new GradleException("Cannot obtain JavaPluginConvention", e);
+        }
 
-        Jar jarTask = (Jar) project.getTasks().getByName("jar");
-        jarTask.dependsOn(compileModuleInfo);
-        jarTask.from(compileModuleInfo.getTargetFile());
+        Optional<Path> moduleInfoJava = main.getAllJava()
+                .getSourceDirectories()
+                .getFiles()
+                .stream()
+                .map(sourceDir -> sourceDir.toPath().resolve("module-info.java"))
+                .filter(Files::exists)
+                .findAny();
+
+        if (moduleInfoJava.isPresent()) {
+            JavaCompile compileJava = (JavaCompile) project.getTasks().getByName("compileJava");
+            compileJava.getModularity().getInferModulePath().set(false);
+            compileJava.exclude("module-info.java");
+
+            Path path = moduleInfoJava.get();
+            Path outputDir = project.getBuildDir().toPath().resolve("classes").resolve("module-info").resolve("main");
+            main.getOutput().dir(outputDir);
+            //noinspection Convert2Lambda
+            TaskProvider<CompileModuleInfo> compileModuleInfo = project.getTasks().register("compileModuleInfo", CompileModuleInfo.class, new Action<CompileModuleInfo>() {
+                @Override
+                public void execute(CompileModuleInfo task) {
+                    task.getSourceFile().set(path.toFile());
+                    task.getTargetFile().set(outputDir.resolve("module-info.class").toFile());
+                }
+            });
+
+            project.getTasks().getByName("classes").dependsOn(compileModuleInfo);
+        }
     }
 }

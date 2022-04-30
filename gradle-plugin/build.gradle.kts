@@ -1,55 +1,32 @@
 plugins {
     `java-gradle-plugin`
-    `maven-publish`
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("com.gradle.plugin-publish") version "1.0.0-rc-1"
+    id("com.gradle.plugin-publish") version "0.18.0"
 }
 
 dependencies {
     compileOnly(gradleApi())
+
     implementation(rootProject)
 }
 
-tasks.jar {
-    enabled = false
-    dependsOn(tasks.shadowJar)
+configurations.named(JavaPlugin.API_CONFIGURATION_NAME) {
+    dependencies.remove(project.dependencies.gradleApi())
 }
 
-tasks.shadowJar {
-    archiveClassifier.set(null as String?)
-
-    relocate("org.objectweb.asm", "org.glavo.mic.plugin.asm")
-    relocate("com.github.javaparser", "org.glavo.mic.plugin.javaparser")
-    minimize()
+pluginBundle {
+    website = "https://github.com/Glavo/module-info-compiler"
+    vcsUrl = "https://github.com/Glavo/module-info-compiler.git"
+    tags = listOf("java", "modules", "jpms", "modularity")
 }
 
 gradlePlugin {
     plugins {
-        create("kala-retro8") {
-            id = "org.glavo.mic.plugin"
-            displayName = "ModuleInfo Compiler"
-            description = ""
-            implementationClass = "kala.plugins.retro8.Retro8Plugin"
+        create("compileModuleInfoPlugin") {
+            id = "org.glavo.compile-module-info"
+            displayName = "Compile Module Info Plugin"
+            description = rootProject.description
+            implementationClass = "org.glavo.mic.plugin.CompileModuleInfoPlugin"
         }
     }
 }
 
-pluginBundle {
-    website = "https://github.com/Glavo/kala-retro8"
-    vcsUrl = "https://github.com/Glavo/kala-retro8.git"
-    tags = listOf("java", "modules", "jpms", "modularity")
-}
-
-publishing {
-    repositories {
-        mavenLocal()
-    }
-
-    publications {
-        this.create<MavenPublication>("pluginMaven") {
-            groupId = project.group.toString()
-            artifactId = project.name
-            version = project.version.toString()
-        }
-    }
-}

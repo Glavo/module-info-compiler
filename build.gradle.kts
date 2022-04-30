@@ -1,95 +1,87 @@
 import java.util.Properties
 
 plugins {
-    id("java")
+    `java-library`
     id("com.github.johnrengelman.shadow") version "7.1.2"
     `maven-publish`
     signing
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }
 
-loadMavenPublishProperties()
-
 allprojects {
     apply {
-        plugin("java")
-        plugin("maven-publish")
+        plugin("java-library")
+        plugin("com.github.johnrengelman.shadow")
     }
 
     group = "org.glavo"
-    version = "1.5"// + "-SNAPSHOT"
+    version = "2.0-RC1" + "-SNAPSHOT"
 
     repositories {
         mavenCentral()
     }
-
-    dependencies {
-        compileOnly(gradleApi())
-
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
-    }
-
 
     tasks.compileJava {
         sourceCompatibility = "1.8"
         targetCompatibility = "1.8"
     }
 
-    tasks.getByName<Test>("test") {
-        useJUnitPlatform()
+    tasks.withType<Javadoc>().configureEach {
+        (options as StandardJavadocDocletOptions).also {
+            it.encoding("UTF-8")
+            it.addStringOption("link", "https://docs.oracle.com/en/java/javase/17/docs/api/")
+            it.addBooleanOption("html5", true)
+            it.addStringOption("Xdoclint:none", "-quiet")
+        }
+    }
+
+    java {
+        withSourcesJar()
+        withJavadocJar()
+    }
+
+    tasks.jar {
+        archiveClassifier.set("core")
+    }
+
+    tasks.shadowJar {
+        archiveClassifier.set("")
+
+        relocate("org.objectweb.asm", "org.glavo.mic.asm")
+        relocate("com.github.javaparser", "org.glavo.mic.javaparser")
+
+        minimize()
     }
 }
 
-description = "Compiler for module-info.java"
 
 dependencies {
     implementation("com.github.javaparser:javaparser-core:3.24.2")
-    // implementation("com.github.javaparser:javaparser-symbol-solver-core:3.24.2")
     implementation("org.ow2.asm:asm:9.3")
 }
 
-tasks.jar {
-    enabled = false
-    dependsOn(tasks.shadowJar)
-}
+loadMavenPublishProperties()
 
-tasks.shadowJar {
+description = "Compiler for module-info.java"
+
+tasks.jar {
     manifest {
         attributes(
             "Main-Class" to "org.glavo.mic.ModuleInfoCompiler"
         )
     }
-
-    archiveClassifier.set(null as String?)
-
-    relocate("org.objectweb.asm", "org.glavo.mic.asm")
-    relocate("com.github.javaparser", "org.glavo.mic.javaparser")
-
-    minimize()
-}
-
-java {
-    withSourcesJar()
-    // withJavadocJar()
-}
-
-tasks.create<Jar>("javadocJar") {
-    group = "build"
-    archiveClassifier.set("javadoc")
-}
-
-tasks.withType<GenerateModuleMetadata>().configureEach {
-    enabled = false
 }
 
 configure<PublishingExtension> {
     publications {
         create<MavenPublication>("maven") {
+
+            project.shadow.component(this)
+
             groupId = project.group.toString()
             version = project.version.toString()
             artifactId = project.name
-            artifact(tasks.shadowJar)
+            //artifact(tasks.shadowJar)
             artifact(tasks["sourcesJar"])
             artifact(tasks["javadocJar"])
 
@@ -140,6 +132,10 @@ nexusPublishing {
             password.set(rootProject.ext["sonatypePassword"].toString())
         }
     }
+}
+
+tasks.withType<GenerateModuleMetadata> {
+    enabled = false
 }
 
 fun loadMavenPublishProperties() {
