@@ -6,13 +6,12 @@ A tool for compiling `module-info.java` for Java alone.
 
 It can easily compile `module-info.java` for your Java 8 project to fit JPMS without complicated module path configuration.
 
-It can be used as a dependency library, as a command line tool, or as a Gradle plugin.
+It can be used as a dependency library, as a command line tool, or as a [**Gradle plugin**](https://plugins.gradle.org/plugin/org.glavo.compile-module-info-plugin).
 
-It only parses the syntax of `module-info.java` without checking the actual module.
-If you really don't know how to configure javac to compile `module-info.java` correctly in a complex project, it can help you.
+It only parses the syntax of `module-info.java` without checking the actual module,
+so it compiles without configuring the module path.
 
-This tool does not depend on javac, it can run on Java 8 or higher, 
-and you can configure the major version of the target class file.
+This tool does not depend on javac, it can run on Java 8 or higher, and you can configure the major version of the target class file.
 
 ## Usage
 
