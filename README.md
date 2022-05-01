@@ -48,6 +48,8 @@ tasks.named<org.glavo.mic.tasks.CompileModuleInfo>("compileModuleInfo") {
 }
 ```
 
+Here is a sample project: [Glavo/compile-module-info-sample](https://github.com/Glavo/compile-module-info-sample)
+
 ### Use as a CLI tool
 
 Download the jar from the [release page](https://github.com/Glavo/module-info-compiler/releases/),
