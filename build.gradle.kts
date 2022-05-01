@@ -77,7 +77,7 @@ loadMavenPublishProperties()
 configure<PublishingExtension> {
     publications {
         create<MavenPublication>("maven") {
-            project.shadow.component(this)
+            // project.shadow.component(this)
 
             groupId = project.group.toString()
             version = project.version.toString()
@@ -128,6 +128,7 @@ if (rootProject.ext.has("signing.key")) {
     }
 }
 
+// gradle publishMavenPublicationToSonatypeRepository closeAndReleaseSonatypeStagingRepository
 nexusPublishing {
     repositories {
         sonatype {
