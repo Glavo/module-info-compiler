@@ -6,61 +6,61 @@ plugins {
     `maven-publish`
     signing
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+
+    `java-gradle-plugin`
+    id("com.gradle.plugin-publish") version "0.18.0"
 }
 
-allprojects {
-    apply {
-        plugin("java-library")
-        plugin("com.github.johnrengelman.shadow")
+group = "org.glavo"
+version = "2.0"// + "-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+tasks.compileJava {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+}
+
+tasks.withType<Javadoc>().configureEach {
+    (options as StandardJavadocDocletOptions).also {
+        it.encoding("UTF-8")
+        it.addStringOption("link", "https://docs.oracle.com/en/java/javase/17/docs/api/")
+        it.addBooleanOption("html5", true)
+        it.addStringOption("Xdoclint:none", "-quiet")
     }
+}
 
-    group = "org.glavo"
-    version = "2.0-RC1" + "-SNAPSHOT"
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
 
-    repositories {
-        mavenCentral()
-    }
+tasks.jar {
+    // archiveClassifier.set("core")
+}
 
-    tasks.compileJava {
-        sourceCompatibility = "1.8"
-        targetCompatibility = "1.8"
-    }
+tasks.shadowJar {
+    // archiveClassifier.set(null as String?)
 
-    tasks.withType<Javadoc>().configureEach {
-        (options as StandardJavadocDocletOptions).also {
-            it.encoding("UTF-8")
-            it.addStringOption("link", "https://docs.oracle.com/en/java/javase/17/docs/api/")
-            it.addBooleanOption("html5", true)
-            it.addStringOption("Xdoclint:none", "-quiet")
-        }
-    }
+    // relocate("org.objectweb.asm", "org.glavo.mic.asm")
+    // relocate("com.github.javaparser", "org.glavo.mic.javaparser")
 
-    java {
-        withSourcesJar()
-        withJavadocJar()
-    }
-
-    tasks.jar {
-        archiveClassifier.set("core")
-    }
-
-    tasks.shadowJar {
-        archiveClassifier.set("")
-
-        relocate("org.objectweb.asm", "org.glavo.mic.asm")
-        relocate("com.github.javaparser", "org.glavo.mic.javaparser")
-
-        minimize()
-    }
+    minimize()
 }
 
 
 dependencies {
+    compileOnly(gradleApi())
+
     implementation("com.github.javaparser:javaparser-core:3.24.2")
     implementation("org.ow2.asm:asm:9.3")
 }
 
-loadMavenPublishProperties()
+configurations.named(JavaPlugin.API_CONFIGURATION_NAME) {
+    dependencies.remove(project.dependencies.gradleApi())
+}
 
 description = "Compiler for module-info.java"
 
@@ -72,18 +72,22 @@ tasks.jar {
     }
 }
 
+loadMavenPublishProperties()
+
 configure<PublishingExtension> {
     publications {
         create<MavenPublication>("maven") {
-
             project.shadow.component(this)
 
             groupId = project.group.toString()
             version = project.version.toString()
             artifactId = project.name
-            //artifact(tasks.shadowJar)
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["javadocJar"])
+
+            from(components["java"])
+
+            // artifact(tasks.shadowJar)
+            // artifact(tasks["sourcesJar"])
+            // artifact(tasks["javadocJar"])
 
             pom {
                 name.set(project.name)
@@ -134,8 +138,23 @@ nexusPublishing {
     }
 }
 
-tasks.withType<GenerateModuleMetadata> {
-    enabled = false
+
+
+pluginBundle {
+    website = "https://github.com/Glavo/module-info-compiler"
+    vcsUrl = "https://github.com/Glavo/module-info-compiler.git"
+    tags = listOf("java", "modules", "jpms", "modularity")
+}
+
+gradlePlugin {
+    plugins {
+        create("compileModuleInfoPlugin") {
+            id = "org.glavo.compile-module-info-plugin"
+            displayName = "Compile Module Info Plugin"
+            description = rootProject.description
+            implementationClass = "org.glavo.mic.CompileModuleInfoPlugin"
+        }
+    }
 }
 
 fun loadMavenPublishProperties() {

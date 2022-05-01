@@ -1,3 +1,3 @@
 rootProject.name = "module-info-compiler"
 
-include("gradle-plugin")
+// include("gradle-plugin")

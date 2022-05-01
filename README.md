@@ -66,7 +66,7 @@ buildscript {
 Then you can create a task that compiles `module-info.java` like this:
 
 ```kotlin
-val compileModuleInfo = tasks.create<org.glavo.mic.plugin.tasks.CompileModuleInfo>("compileModuleInfo") {
+val compileModuleInfo = tasks.create<org.glavo.mic.org.glavo.mic.tasks.CompileModuleInfo>("compileModuleInfo") {
     sourceFile.set(file("src/main/module-info.java"))
     targetFile.set(buildDir.resolve("classes/java/module-info/module-info.class"))
 

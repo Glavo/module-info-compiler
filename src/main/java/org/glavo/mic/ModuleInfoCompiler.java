@@ -83,7 +83,7 @@ public class ModuleInfoCompiler {
 
             ModuleVisitor moduleVisitor = classWriter.visitModule(md.getNameAsString(), md.isOpen() ? Opcodes.ACC_OPEN : 0, moduleVersion);
             if (mainClass != null) {
-                moduleVisitor.visitMainClass(mainClass);
+                moduleVisitor.visitMainClass(mainClass.replace('.', '/'));
             }
 
             if (!md.getNameAsString().equals("java.base")) {

@@ -1,6 +1,6 @@
-package org.glavo.mic.plugin;
+package org.glavo.mic;
 
-import org.glavo.mic.plugin.tasks.CompileModuleInfo;
+import org.glavo.mic.tasks.CompileModuleInfo;
 import org.gradle.api.*;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.JavaPluginExtension;
