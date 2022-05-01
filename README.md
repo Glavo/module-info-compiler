@@ -77,31 +77,3 @@ Gradle:
 ```kotlin
 implementation("org.glavo:module-info-compiler:2.0")
 ```
-
-### Gradle Task (`CompileModuleInfo`)
-
-First, you can add it to the classpath of your Gradle build script like this:
-
-```kotlin
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath("org.glavo:module-info-compiler:1.5")
-    }
-}
-```
-
-Then you can create a task that compiles `module-info.java` like this:
-
-
-Then you can include it inside the jar like this:
-
-```kotlin
-tasks.jar {
-    dependsOn(compileModuleInfo)
-    from(compileModuleInfo.targetFile)
-}
-```
