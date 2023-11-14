@@ -11,8 +11,8 @@ plugins {
     id("com.gradle.plugin-publish") version "0.18.0"
 }
 
-group = "org.glavo"
-version = "2.0"// + "-SNAPSHOT"
+group = "io.github.machaval"
+version = "3.0"// + "-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -22,7 +22,7 @@ tasks.compileJava {
     sourceCompatibility = "1.8"
     targetCompatibility = "1.8"
 }
-
+/*
 tasks.withType<Javadoc>().configureEach {
     (options as StandardJavadocDocletOptions).also {
         it.encoding("UTF-8")
@@ -31,6 +31,7 @@ tasks.withType<Javadoc>().configureEach {
         it.addStringOption("Xdoclint:none", "-quiet")
     }
 }
+*/
 
 java {
     withSourcesJar()
@@ -72,8 +73,8 @@ tasks.jar {
     }
 }
 
-loadMavenPublishProperties()
-
+// loadMavenPublishProperties()
+/*
 configure<PublishingExtension> {
     publications {
         create<MavenPublication>("maven") {
@@ -115,8 +116,8 @@ configure<PublishingExtension> {
             }
         }
     }
-}
-
+}*/
+/*
 if (rootProject.ext.has("signing.key")) {
     signing {
         useInMemoryPgpKeys(
@@ -128,6 +129,7 @@ if (rootProject.ext.has("signing.key")) {
     }
 }
 
+
 // gradle publishMavenPublicationToSonatypeRepository closeAndReleaseSonatypeStagingRepository
 nexusPublishing {
     repositories {
@@ -138,26 +140,25 @@ nexusPublishing {
         }
     }
 }
-
-
+*/
 
 pluginBundle {
-    website = "https://github.com/Glavo/module-info-compiler"
-    vcsUrl = "https://github.com/Glavo/module-info-compiler.git"
+    website = "https://github.com/machaval/module-info-compiler"
+    vcsUrl = "https://github.com/machaval/module-info-compiler.git"
     tags = listOf("java", "modules", "jpms", "modularity")
 }
 
 gradlePlugin {
     plugins {
         create("compileModuleInfoPlugin") {
-            id = "org.glavo.compile-module-info-plugin"
+            id = "io.github.machaval.compile-module-info-plugin"
             displayName = "Compile Module Info Plugin"
             description = rootProject.description
             implementationClass = "org.glavo.mic.CompileModuleInfoPlugin"
         }
     }
 }
-
+/*
 fun loadMavenPublishProperties() {
     var secretPropsFile = project.rootProject.file("gradle/maven-central-publish.properties")
     if (!secretPropsFile.exists()) {
@@ -190,3 +191,4 @@ fun loadMavenPublishProperties() {
         }
     }
 }
+*/
