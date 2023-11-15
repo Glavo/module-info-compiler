@@ -24,6 +24,7 @@ public class CompileModuleInfoPlugin implements Plugin<Project> {
                 JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
                 main = javaPluginExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
             } else {
+                @SuppressWarnings("deprecation")
                 JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
                 main = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
             }
@@ -45,7 +46,7 @@ public class CompileModuleInfoPlugin implements Plugin<Project> {
             compileJava.exclude("module-info.java");
 
             Path path = moduleInfoJava.get();
-            Path outputDir = project.getBuildDir().toPath().resolve("classes").resolve("module-info").resolve("main");
+            Path outputDir = project.getLayout().getBuildDirectory().getAsFile().get().toPath().resolve("classes").resolve("module-info").resolve("main");
             main.getOutput().dir(outputDir);
             //noinspection Convert2Lambda
             TaskProvider<CompileModuleInfo> compileModuleInfo = project.getTasks().register("compileModuleInfo", CompileModuleInfo.class, new Action<CompileModuleInfo>() {
