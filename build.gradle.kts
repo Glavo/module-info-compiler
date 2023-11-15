@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "org.glavo"
-version = "2.0"// + "-SNAPSHOT"
+version = "3.0" + "-SNAPSHOT"
 
 repositories {
     mavenCentral()
