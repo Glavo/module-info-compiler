@@ -54,7 +54,7 @@ tasks.shadowJar {
 dependencies {
     compileOnly(gradleApi())
 
-    implementation("com.github.javaparser:javaparser-core:3.24.2")
+    implementation("com.github.javaparser:javaparser-core:3.25.6")
     implementation("org.ow2.asm:asm:9.6")
 }
 
