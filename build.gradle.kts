@@ -92,7 +92,7 @@ configure<PublishingExtension> {
             pom {
                 name.set(project.name)
                 description.set(project.description)
-                url.set("https://github.com/Glavo/GMIC")
+                url.set("https://github.com/Glavo/module-info-compiler")
 
                 licenses {
                     license {
@@ -110,7 +110,7 @@ configure<PublishingExtension> {
                 }
 
                 scm {
-                    url.set("https://github.com/Glavo/GMIC")
+                    url.set("https://github.com/Glavo/module-info-compiler")
                 }
             }
         }

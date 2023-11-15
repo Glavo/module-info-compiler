@@ -7,6 +7,7 @@ import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.modules.*;
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.ModuleVisitor;
 import org.objectweb.asm.Opcodes;
@@ -80,6 +81,12 @@ public class ModuleInfoCompiler {
 
             ClassWriter classWriter = new ClassWriter(0);
             classWriter.visit((44 + targetCompatibility), Opcodes.ACC_MODULE, "module-info", null, null, null);
+            if (md.getAnnotations() != null) {
+                md.getAnnotations().forEach(ant -> {
+                    AnnotationVisitor annotationVisitor = classWriter.visitAnnotation(ant.getNameAsString(),true);
+                    annotationVisitor.visitEnd();
+                });
+            }
 
             ModuleVisitor moduleVisitor = classWriter.visitModule(md.getNameAsString(), md.isOpen() ? Opcodes.ACC_OPEN : 0, moduleVersion);
             if (mainClass != null) {
