@@ -55,7 +55,7 @@ dependencies {
     compileOnly(gradleApi())
 
     implementation("com.github.javaparser:javaparser-core:3.24.2")
-    implementation("org.ow2.asm:asm:9.3")
+    implementation("org.ow2.asm:asm:9.6")
 }
 
 configurations.named(JavaPlugin.API_CONFIGURATION_NAME) {
